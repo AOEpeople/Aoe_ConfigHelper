@@ -1,0 +1,7 @@
+{
+   "name": "aoepeople/aoe_confighelper",
+   "type": "magento-module",
+   "require": {
+      "magento-hackathon/magento-composer-installer": "*"
+   }
+}
