@@ -6,7 +6,9 @@ class Aoe_ConfigHelper_Block_AdminhtmlSystemConfigFormField extends Mage_Adminht
     public function render(Varien_Data_Form_Element_Abstract $element)
     {
         $html = parent::render($element);
-        $prompt = 'onclick="window.prompt(\'Copy\', \''.$this->_getConfigCode($element).'\')"';
+        $configCode = $this->_getConfigCode($element);
+        $id = str_replace('/','_', $configCode);
+        $prompt = 'onclick="var v=$(\''.$id.'\').getValue(); window.prompt(\'Copy\', \''. $configCode .' = \' + v)"';
         $html = str_replace("<label for=", "<label $prompt for=", $html);
         return $html;
     }
