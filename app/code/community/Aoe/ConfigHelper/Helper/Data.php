@@ -5,6 +5,8 @@ class Aoe_ConfigHelper_Helper_Data extends Mage_Core_Helper_Abstract
     const XML_PATH_HINTS_ACTIVE = 'dev/aoe_confighelper/hinting_active';
     const XML_PATH_RESTRICTION_MODE = 'dev/aoe_confighelper/restriction_mode';
     const XML_PATH_RESTRICTED_PATHS = 'global/aoe_confighelper/restricted_paths';
+    const XML_PATH_RESTRICTED_PATHS_ADD = 'dev/aoe_confighelper/restricted_paths_add';
+    const XML_PATH_RESTRICTED_PATHS_REMOVE = 'dev/aoe_confighelper/restricted_paths_remove';
 
     const MODE_WARNING = 'warning';
     const MODE_READONLY = 'readonly';
@@ -41,17 +43,23 @@ class Aoe_ConfigHelper_Helper_Data extends Mage_Core_Helper_Abstract
     {
         if (!is_array($this->restrictedPaths)) {
             $restrictedPaths = array();
-            $restrictedPathsNode = Mage::app()->getConfig()->getNode('global/aoe_confighelper/restricted_paths');
+
+            $restrictedPathsNode = Mage::app()->getConfig()->getNode(self::XML_PATH_RESTRICTED_PATHS);
             if ($restrictedPathsNode instanceof Mage_Core_Model_Config_Element) {
-                $restrictedPaths = $restrictedPathsNode->asArray();
+                $paths = $restrictedPathsNode->asArray();
+                if (is_array($paths)) {
+                    $paths = $this->flattenPathArray($paths);
+                    $restrictedPaths = array_keys($paths);
+                }
             }
 
-            if (is_array($restrictedPaths)) {
-                $restrictedPaths = $this->flattenPathArray($restrictedPaths);
-                $this->restrictedPaths = array_keys($restrictedPaths);
-            } else {
-                $this->restrictedPaths = array();
-            }
+            $addPaths = $this->parsePaths(Mage::getStoreConfig(self::XML_PATH_RESTRICTED_PATHS_ADD, Mage_Core_Model_Store::ADMIN_CODE));
+            $restrictedPaths = array_unique(array_merge($restrictedPaths, $addPaths));
+
+            $removePaths = $this->parsePaths(Mage::getStoreConfig(self::XML_PATH_RESTRICTED_PATHS_REMOVE, Mage_Core_Model_Store::ADMIN_CODE));
+            $restrictedPaths = array_filter(array_diff($restrictedPaths, $removePaths));
+
+            $this->restrictedPaths = $restrictedPaths;
         }
 
         return $this->restrictedPaths;
@@ -81,5 +89,26 @@ class Aoe_ConfigHelper_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return $result;
+    }
+
+    /**
+     * @param string $pathString
+     *
+     * @return string[]
+     */
+    protected function parsePaths($pathString)
+    {
+        $pathString = trim($pathString);
+        $pathString = str_replace(array("\n", "\r", "\t"), ',', $pathString);
+
+        $paths = explode(',', $pathString);
+        $paths = array_map(
+            function ($value) {
+                return trim($value, ' /');
+            },
+            $paths
+        );
+
+        return array_filter($paths);
     }
 }
