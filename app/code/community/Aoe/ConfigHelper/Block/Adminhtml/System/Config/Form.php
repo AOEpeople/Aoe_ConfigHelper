@@ -43,8 +43,9 @@ class Aoe_ConfigHelper_Block_Adminhtml_System_Config_Form extends Mage_Adminhtml
                 $mode = $helper->getConfigPathMode($path, $this->getWebsiteCode(), $this->getStoreCode());
 
                 if ($mode === $helper::MODE_READONLY) {
+                    $tooltip = htmlspecialchars($helper->__('This value is managed externally. Changes are not permitted.'));
                     $scopeLabel = $helper->__('[READ-ONLY / EXTERNAL]');
-                    $scopeLabel = "<span style=\"color: red;\">${scopeLabel}</span>";
+                    $scopeLabel = "<span style=\"color: red;\" title=\"${tooltip}\">${scopeLabel}</span>";
                     $fieldElement->setScopeLabel($fieldElement->getScopeLabel() . '&nbsp;' . $scopeLabel);
                     $fieldElement->setDisabled(true);
                     $fieldElement->setCanUseWebsiteValue(false);
