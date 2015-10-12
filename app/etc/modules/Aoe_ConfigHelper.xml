@@ -4,7 +4,10 @@
         <Aoe_ConfigHelper>
             <active>true</active>
             <codePool>community</codePool>
-            <depends></depends>
+            <depends>
+                <Mage_Core/>
+                <Mage_Adminhtml/>
+            </depends>
         </Aoe_ConfigHelper>
     </modules>
 </config>
