@@ -9,7 +9,7 @@ class Aoe_ConfigHelper_Model_Config_Source_Mode
 
         return array(
             array(
-                'value' => '',
+                'value' => $helper::MODE_DISABLED,
                 'label' => $helper->__('Disabled'),
             ),
             array(
@@ -29,7 +29,7 @@ class Aoe_ConfigHelper_Model_Config_Source_Mode
         $helper = Mage::helper('Aoe_ConfigHelper');
 
         return array(
-            ''                     => $helper->__('Disabled'),
+            $helper::MODE_DISABLED => $helper->__('Disabled'),
             $helper::MODE_WARNING  => $helper->__('Warning'),
             $helper::MODE_READONLY => $helper->__('Read-Only'),
         );

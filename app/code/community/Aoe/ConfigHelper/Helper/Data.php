@@ -8,6 +8,7 @@ class Aoe_ConfigHelper_Helper_Data extends Mage_Core_Helper_Abstract
     const XML_PATH_RESTRICTED_PATHS_ADD = 'dev/aoe_confighelper/restricted_paths_add';
     const XML_PATH_RESTRICTED_PATHS_REMOVE = 'dev/aoe_confighelper/restricted_paths_remove';
 
+    const MODE_DISABLED = '';
     const MODE_WARNING = 'warning';
     const MODE_READONLY = 'readonly';
 
@@ -22,18 +23,18 @@ class Aoe_ConfigHelper_Helper_Data extends Mage_Core_Helper_Abstract
     {
         $mode = Mage::getStoreConfig(self::XML_PATH_RESTRICTION_MODE, Mage_Core_Model_Store::ADMIN_CODE);
 
-        return (($mode === self::MODE_WARNING || $mode === self::MODE_READONLY) ? $mode : '');
+        return (($mode === self::MODE_WARNING || $mode === self::MODE_READONLY) ? $mode : self::MODE_DISABLED);
     }
 
     public function getConfigPathMode($path, $website, $store)
     {
         $restrictedPaths = $this->getRestrictedConfigPaths();
         if (empty($restrictedPaths)) {
-            return '';
+            return self::MODE_DISABLED;
         }
 
         if (!in_array(trim($path, ' /'), $restrictedPaths)) {
-            return '';
+            return self::MODE_DISABLED;
         }
 
         return $this->getConfigPathRestrictionMode();
